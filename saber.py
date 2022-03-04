@@ -1,27 +1,15 @@
 import pygame
+from shaft import Shaft
 
-class Saber:
-    # Global Variables
-    x = 0
-    y = 0
-    height = 100
-    width = 50
+class Saber (Shaft):
 
     # constructor 
     def __init__( self, aX, aY, aW, aH, aColor ):
-        self.x = aX
-        self.y = aY
-        self.height = aH
-        self.width = aW
+        super().__init__(aX, aY, aW, aH)
         self.color = aColor
-        self.body = pygame.Rect(aX,aY,aW,aH)
 
 
     def render(self, aSurface):
         pygame.draw.rect(aSurface, self.color, self.body)
 
-    def updatePosition(self, aX, aY):
-        self.x = aX
-        self.y = aY
-        self.body = pygame.Rect(aX,aY,self.width,self.height)
         
