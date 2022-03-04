@@ -3,11 +3,11 @@
 #############
 
 import cv2
-from cv2 import circle
 import pygame
-import random
 
 from HandDetector import HandDetector
+from saber import Saber
+from shaft import Shaft
 
 #############
 ## GLOBALS ##
@@ -23,6 +23,11 @@ pygame.display.set_caption("Beat Light Saber")
 
 #game stuff
 FPS = 60
+handIsOpen = False
+
+#shaft and lightsaber (CHANGE COLOR LATER)
+aShaft = Shaft(100,100,100,50)
+aSaber = Saber(200,110,200,30,(255,0,0))
 
 ######################
 ## HELPER FUNCTIONS ##
@@ -48,7 +53,13 @@ def main():
         
         # if there is at least one hand seen
         if len(handDetector.landmarkDictionary) > 0: 
-            pass
+            if handDetector.landmarkDictionary[0][12][1] < handDetector.landmarkDictionary[0][9][1] :
+                handIsOpen = True
+            else:
+                handIsOpen = False
+            aShaft.render(WINDOW)
+            if(not handIsOpen):
+                aSaber.render(WINDOW)
         
  
         # for all the game events
