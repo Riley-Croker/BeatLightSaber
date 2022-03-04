@@ -33,6 +33,8 @@ aSaber = Saber(200,110,200,30,(255,0,0))
 ## HELPER FUNCTIONS ##
 ######################
 
+def mapToNewRange(val, inputMin, inputMax, outputMin, outputMax):
+    return outputMin + ((outputMax - outputMin) / (inputMax - inputMin)) * (val - inputMin)
 
 ###################
 ## MAIN FUNCTION ##
@@ -57,10 +59,22 @@ def main():
                 handIsOpen = True
             else:
                 handIsOpen = False
+            #rendering the saber and the shaft
             aShaft.render(WINDOW)
             if(not handIsOpen):
                 aSaber.render(WINDOW)
         
+            # updating the position of your shaft and saber based on your hand
+            aShaft.updatePosition(WIDTH - mapToNewRange(handDetector.landmarkDictionary[0][9][0], 0, 640, 0, WIDTH), 
+                                  mapToNewRange(handDetector.landmarkDictionary[0][9][1], 0, 480, 0, HEIGHT))
+            # right Hand
+            if handDetector.landmarkDictionary[0][4][0] < handDetector.landmarkDictionary[0][20][0] :
+                aSaber.updatePosition(aShaft.x + aShaft.width, aShaft.y + ((aShaft.height-aSaber.height)/2))
+            # left hand
+            else:
+                aSaber.updatePosition(aShaft.x - aSaber.width, aShaft.y + ((aShaft.height-aSaber.height)/2))
+
+            
  
         # for all the game events
         for event in pygame.event.get():

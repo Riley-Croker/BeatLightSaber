@@ -18,3 +18,8 @@ class Shaft:
 
     def render(self, aSurface):
         pygame.draw.rect(aSurface, (0,0,0), self.body)
+
+    def updatePosition(self, aX, aY):
+        self.x = aX
+        self.y = aY
+        self.body = pygame.Rect(aX,aY,self.width,self.height)
