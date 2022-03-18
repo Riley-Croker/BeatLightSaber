@@ -206,6 +206,14 @@ def main():
             animateDroid()
             if(not handIsOpen):
                 droidCollision()
+            if(droidList.len() == 0):
+                switchVal = 4
+                fillDroidList(5,6)
+        
+        elif switchVal == 4:
+            animateDroid()
+            if(not handIsOpen):
+                droidCollision()
             
  
         # for all the game events
