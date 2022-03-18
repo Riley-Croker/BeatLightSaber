@@ -17,6 +17,8 @@ class Saber (Shaft):
     
     def collisionRect(self, aRect):
         return self.body.colliderect(aRect)
-
+    
+    def changeColor(self, r, g, b):
+        self.color = (r,g,b)
 
         

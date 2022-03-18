@@ -4,8 +4,9 @@
 
 import cv2
 import pygame
-
+import random
 from HandDetector import HandDetector
+from droid import Droid
 from saber import Saber
 from shaft import Shaft
 
@@ -27,6 +28,11 @@ font = pygame.font.SysFont('Arial', 55)
 #game stuff
 FPS = 60
 
+# ENEMY LIST
+enemyTypeList = ["base"]
+droidList = []
+maxSpeed = 4
+
 #shaft and lightsaber (CHANGE COLOR LATER)
 aShaft = Shaft(100,100,100,50)
 aSaber = Saber(200,110,200,30,(255,255,255))
@@ -37,6 +43,30 @@ aSaber = Saber(200,110,200,30,(255,255,255))
 
 def mapToNewRange(val, inputMin, inputMax, outputMin, outputMax):
     return outputMin + ((outputMax - outputMin) / (inputMax - inputMin)) * (val - inputMin)
+
+#Fills the enemylist with a number of enemies
+def fillDroidList(num, maxSpeed):
+    for i in range(num):
+        xPos = (random.randrange(0, 1000, 50))
+        yPos = (random.randrange(-500, -100, 25))
+        enemyType = (random.choice(enemyTypeList))
+        enemySpeed = random.randrange(2,maxSpeed)
+        droid = Droid( xPos, yPos, enemyType, enemySpeed )
+        droidList.append(droid)
+
+
+#Renders and moves to the left side of the sceen 
+def animateDroid():
+    for droid in droidList:
+        droid.render(WINDOW, droid.type)
+        droid.moveDroid()
+        droid.updateHitbox()
+
+#check droid collision
+def droidCollision():
+    for droid in droidList:
+        if(aSaber.collisionRect(droid.hitbox)):
+            droidList.remove(droid)
     
 
 ###################
@@ -137,6 +167,7 @@ def main():
             if not handIsOpen:
                 if aSaber.collisionRect(startRect):
                     switchVal = 3
+                    fillDroidList(2,5)
                 if aSaber.collisionRect(instRect):
                     switchVal = 2
         # INSTRUCTIONS
@@ -172,7 +203,9 @@ def main():
                     switchVal = 1        
 
         elif switchVal == 3:
-            pass
+            animateDroid()
+            if(not handIsOpen):
+                droidCollision()
             
  
         # for all the game events
