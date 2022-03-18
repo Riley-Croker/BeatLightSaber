@@ -12,4 +12,11 @@ class Saber (Shaft):
     def render(self, aSurface):
         pygame.draw.rect(aSurface, self.color, self.body)
 
+    def collisionPoint(self, aX, aY):
+        return self.body.collidepoint(aX,aY)
+    
+    def collisionRect(self, aRect):
+        return self.body.colliderect(aRect)
+
+
         
