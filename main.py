@@ -10,6 +10,24 @@ from droid import Droid
 from saber import Saber
 from shaft import Shaft
 
+############
+## IMAGES ##
+############
+
+saberScreen = pygame.image.load('Assets\SaberScreen.jpg')
+saberScreen = pygame.transform.scale(saberScreen, (1100, 650))
+menuScreen = pygame.image.load('Assets\MenuScreen.jpg')
+menuScreen = pygame.transform.scale(menuScreen, (1100, 650))
+level1Screen = pygame.image.load('Assets\Level1Screen.jpg')
+level1Screen = pygame.transform.scale(level1Screen, (1100, 650))
+level2Screen = pygame.image.load('Assets\Level2Screen.jpg')
+level2Screen = pygame.transform.scale(level2Screen, (1100, 650))
+level3Screen = pygame.image.load('Assets\Level3Screen.jpg')
+level3Screen = pygame.transform.scale(level3Screen, (1100, 650))
+loseScreen = pygame.image.load('Assets\LoseScreen.jpg')
+loseScreen = pygame.transform.scale(loseScreen, (1100, 650))
+
+
 #############
 ## GLOBALS ##
 #############
@@ -46,9 +64,10 @@ def mapToNewRange(val, inputMin, inputMax, outputMin, outputMax):
 
 #Fills the enemylist with a number of enemies
 def fillDroidList(num, maxSpeed):
+    droidList.clear()
     for i in range(num):
         xPos = (random.randrange(0, 1000, 50))
-        yPos = (random.randrange(-500, -100, 25))
+        yPos = (random.randrange(-1000, -100, 25))
         enemyType = (random.choice(enemyTypeList))
         enemySpeed = random.randrange(2,maxSpeed)
         droid = Droid( xPos, yPos, enemyType, enemySpeed )
@@ -61,6 +80,13 @@ def animateDroid():
         droid.render(WINDOW, droid.type)
         droid.moveDroid()
         droid.updateHitbox()
+
+#Checks if any droids have hit the bottom
+def checkDroidFinish():
+    for droid in droidList:
+        if(droid.bottom >= 650):
+            return True
+    return False
 
 #check droid collision
 def droidCollision():
@@ -83,7 +109,23 @@ def main():
 
     # while the opencv window is running
     while (not handDetector.shouldClose) and gameIsRunning:
-        WINDOW.fill((42,42,42))
+        #For Backgrounds:
+        if switchVal == 0:
+            WINDOW.blit(saberScreen, (0,0))
+        elif switchVal == 1 or switchVal == 2:
+            WINDOW.blit(menuScreen, (0,0))
+        elif switchVal == 3:
+            WINDOW.blit(level1Screen, (0,0))
+        elif switchVal == 4:
+            WINDOW.blit(level2Screen, (0,0))
+        elif switchVal == 5:
+            WINDOW.blit(level3Screen, (0,0))
+
+        elif switchVal == 99:
+            WINDOW.blit(loseScreen, (0,0))
+        
+        
+
         #FOR DA LIGHTSABER
         # update the webcam feed and hand tracker calculations
         handDetector.update()
@@ -167,29 +209,29 @@ def main():
             if not handIsOpen:
                 if aSaber.collisionRect(startRect):
                     switchVal = 3
-                    fillDroidList(2,5)
+                    fillDroidList(5,5)
                 if aSaber.collisionRect(instRect):
                     switchVal = 2
         # INSTRUCTIONS
         elif switchVal == 2:
             # RENDERING ALL TEXT
             startMessage = "Welcome to BeatLightSaber!"
-            start = font.render(startMessage, True, (0,0,0))
+            start = font.render(startMessage, True, (44,44,44))
             WINDOW.blit(start, (50, 70))
             instructM1 = "In this game, your goal is to slice droids with your "
-            instruct1 = font.render(instructM1, True, (0,0,0))
+            instruct1 = font.render(instructM1, True, (44,44,44))
             WINDOW.blit(instruct1, (50, 150))
             instructM2 = "lightsaber and do not let them hit the bottom"
-            instruct2 = font.render(instructM2, True, (0,0,0))
+            instruct2 = font.render(instructM2, True, (44,44,44))
             WINDOW.blit(instruct2, (50, 200))
             instructM2 = "of the screen!"
-            instruct2 = font.render(instructM2, True, (0,0,0))
+            instruct2 = font.render(instructM2, True, (44,44,44))
             WINDOW.blit(instruct2, (50, 250))
             instructM3 = "Hold the lightsaber with either hand "
-            instruct3 = font.render(instructM3, True, (0,0,0))
+            instruct3 = font.render(instructM3, True, (44,44,44))
             WINDOW.blit(instruct3, (50, 350))
             instructM4 = "and get slicing!"
-            instruct4 = font.render(instructM4, True, (0,0,0))
+            instruct4 = font.render(instructM4, True, (44,44,44))
             WINDOW.blit(instruct4, (50, 400))
 
             backRect = pygame.Rect(900,450,150,150)
@@ -201,19 +243,50 @@ def main():
             if not handIsOpen:
                 if aSaber.collisionRect(backRect):
                     switchVal = 1        
-
+        #Level 1
         elif switchVal == 3:
             animateDroid()
             if(not handIsOpen):
                 droidCollision()
             if(len(droidList) == 0):
                 switchVal = 4
-                fillDroidList(5,6)
-        
+                fillDroidList(8,6)
+            if(checkDroidFinish()):
+                switchVal = 99
+        #Level 2
         elif switchVal == 4:
             animateDroid()
             if(not handIsOpen):
                 droidCollision()
+            if(len(droidList) == 0):
+                switchVal = 5
+                fillDroidList(11,8)
+            if(checkDroidFinish()):
+                switchVal = 99
+        #Level 3
+        elif switchVal == 5:
+            animateDroid()
+            if(not handIsOpen):
+                droidCollision()
+            if(checkDroidFinish()):
+                switchVal = 99
+
+        
+
+        # lose screen
+        elif switchVal == 99:
+            loseMessage = "YOU LOSE!"
+            lose = font.render(loseMessage, True, (255,255,255))
+            WINDOW.blit(lose, (400, 20))
+
+            backRect = pygame.Rect(900,450,150,150)
+            pygame.draw.rect(WINDOW, (0,0,0), backRect)
+            backMessage = "BACK"   
+            back = font.render(backMessage, True, (255,255,255))
+            WINDOW.blit(back, (910, 490))
+            if not handIsOpen:
+                if aSaber.collisionRect(backRect):
+                    switchVal = 1    
             
  
         # for all the game events
