@@ -29,7 +29,7 @@ font = pygame.font.SysFont('Arial', 55)
 FPS = 60
 
 # ENEMY LIST
-enemyTypeList = ["base"]
+enemyTypeList = ["base", "battle", "droideka"]
 droidList = []
 maxSpeed = 4
 
@@ -206,7 +206,7 @@ def main():
             animateDroid()
             if(not handIsOpen):
                 droidCollision()
-            if(droidList.len() == 0):
+            if(len(droidList) == 0):
                 switchVal = 4
                 fillDroidList(5,6)
         

@@ -4,6 +4,12 @@ import pygame
 baseDroidImg = pygame.image.load('Assets\Battle_Droid.png')
 baseDroidImg = pygame.transform.scale(baseDroidImg, (100, 155))
 
+battleDroidImg = pygame.image.load('Assets\Super_Battle_Droid.png')
+battleDroidImg = pygame.transform.scale(battleDroidImg, (100, 155))
+
+droidekaDroidImg = pygame.image.load('Assets\Droideka.png')
+droidekaDroidImg = pygame.transform.scale(droidekaDroidImg, (120, 180))
+
 class Droid:
     ###Global Class Vars
     isDead = False
@@ -19,6 +25,14 @@ class Droid:
             self.width = 100
             self.height = 155
             self.hitbox = pygame.Rect(self.x,self.y,self.width,self.height)
+        elif(atype == "battle"):
+            self.width = 100
+            self.height = 155
+            self.hitbox = pygame.Rect(self.x,self.y,self.width,self.height)
+        elif(atype == "droideka"):
+            self.width = 120
+            self.height = 180
+            self.hitbox = pygame.Rect(self.x,self.y,self.width,self.height)
         self.top = self.y
         self.bottom = self.y + self.height
         self.left = self.x
@@ -29,6 +43,10 @@ class Droid:
     def render(self, aSurface, atype):
         if(atype == "base"):
             aSurface.blit(baseDroidImg,(self.x, self.y))
+        elif(atype == "battle"):
+            aSurface.blit(battleDroidImg,(self.x, self.y))
+        elif(atype == "droideka"):
+            aSurface.blit(droidekaDroidImg,(self.x, self.y))
 
     def setSpeed(self, aSpeed):
         self.speed = aSpeed
