@@ -3,6 +3,7 @@
 #############
 
 import cv2
+import numpy
 import pygame
 import random
 from HandDetector import HandDetector
@@ -24,6 +25,12 @@ level2Screen = pygame.image.load('Assets\Level2Screen.jpg')
 level2Screen = pygame.transform.scale(level2Screen, (1100, 650))
 level3Screen = pygame.image.load('Assets\Level3Screen.jpg')
 level3Screen = pygame.transform.scale(level3Screen, (1100, 650))
+level4Screen = pygame.image.load('Assets\Level4Screen.jpg')
+level4Screen = pygame.transform.scale(level4Screen, (1100, 650))
+vaderScreen = pygame.image.load('Assets\VaderScreen.jpg')
+vaderScreen = pygame.transform.scale(vaderScreen, (1100, 650))
+winScreen = pygame.image.load('Assets\WinScreen.jpg')
+winScreen = pygame.transform.scale(winScreen, (1100, 650))
 loseScreen = pygame.image.load('Assets\LoseScreen.jpg')
 loseScreen = pygame.transform.scale(loseScreen, (1100, 650))
 
@@ -120,7 +127,12 @@ def main():
             WINDOW.blit(level2Screen, (0,0))
         elif switchVal == 5:
             WINDOW.blit(level3Screen, (0,0))
-
+        elif switchVal == 6:
+            WINDOW.blit(level4Screen, (0,0))
+        elif switchVal == 7:
+            WINDOW.blit(vaderScreen, (0,0))
+        elif switchVal == 8:
+            WINDOW.blit(winScreen, (0,0))
         elif switchVal == 99:
             WINDOW.blit(loseScreen, (0,0))
         
@@ -139,7 +151,13 @@ def main():
             aShaft.render(WINDOW)
             if(not handIsOpen):
                 aSaber.render(WINDOW)
-        
+
+            #rotation
+            # changeInX = abs(handDetector.landmarkDictionary[0][3][0] - handDetector.landmarkDictionary[0][17][0])
+            # changeInY = abs(handDetector.landmarkDictionary[0][3][1] - handDetector.landmarkDictionary[0][17][1])
+            # theta = numpy.arcsin((changeInY/changeInX))
+            # aShaft.rotate(theta)
+
             # updating the position of your shaft and saber based on your hand
             aShaft.updatePosition(WIDTH - mapToNewRange(handDetector.landmarkDictionary[0][9][0], 0, 640, 0, WIDTH), 
                                 mapToNewRange(handDetector.landmarkDictionary[0][9][1], 0, 480, 0, HEIGHT))
@@ -149,6 +167,8 @@ def main():
             # left hand
             else:
                 aSaber.updatePosition(aShaft.x - aSaber.width, aShaft.y + ((aShaft.height-aSaber.height)/2))
+
+
 
         # FINITE STATE MACHINE
         # COLOR SWITCH SCREEN
@@ -268,8 +288,35 @@ def main():
             animateDroid()
             if(not handIsOpen):
                 droidCollision()
+            if(len(droidList) == 0):
+                switchVal = 6
+                fillDroidList(15,8)
             if(checkDroidFinish()):
                 switchVal = 99
+        #Level 4
+        elif switchVal == 6:
+            animateDroid()
+            if(not handIsOpen):
+                droidCollision()
+            if(len(droidList) == 0):
+                switchVal = 7
+                fillDroidList(20,10)
+            if(checkDroidFinish()):
+                switchVal = 99
+        #Boss Level
+        elif switchVal == 7:
+            animateDroid()
+            if(not handIsOpen):
+                droidCollision()
+            if(len(droidList) == 0):
+                switchVal = 8
+            if(checkDroidFinish()):
+                switchVal = 99
+        #Win Screen
+        elif switchVal == 8:
+            winMessage = "YOU WIN!"
+            win = font.render(winMessage, True, (255,255,255))
+            WINDOW.blit(win, (400, 20))
 
         
 
