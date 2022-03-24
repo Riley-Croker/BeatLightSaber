@@ -2,6 +2,7 @@
 # imports
 #############
 
+from email.mime import base
 import cv2
 import numpy
 import pygame
@@ -10,6 +11,20 @@ from HandDetector import HandDetector
 from droid import Droid
 from saber import Saber
 from shaft import Shaft
+###########################
+######### SOUND ###########
+###########################
+
+pygame.mixer.init()
+
+saberOnSound = pygame.mixer.Sound("Assets/saberOn.mp3")
+saberOffSound = pygame.mixer.Sound("Assets/saberOff.mp3")
+baseDeathSound = pygame.mixer.Sound("Assets/baseDeath.mp3")
+battleDeathSound = pygame.mixer.Sound("Assets/battleDeath.mp3")
+droidekaDeathSound = pygame.mixer.Sound("Assets/droidekaDeath.mp3")
+clashSound = pygame.mixer.Sound("Assets/clashSound.mp3")
+loseSound = pygame.mixer.Sound("Assets/deathSound.mp3")
+winSound = pygame.mixer.Sound("Assets/winSound.mp3")
 
 ############
 ## IMAGES ##
@@ -92,6 +107,7 @@ def animateDroid():
 def checkDroidFinish():
     for droid in droidList:
         if(droid.bottom >= 650):
+            loseSound.play()
             return True
     return False
 
@@ -100,6 +116,13 @@ def droidCollision():
     for droid in droidList:
         if(aSaber.collisionRect(droid.hitbox)):
             droidList.remove(droid)
+            if(droid.type == "base"):
+                baseDeathSound.play()
+            elif(droid.type == "battle"):
+                battleDeathSound.play()
+            else:
+                droidekaDeathSound.play()
+            clashSound.play()
     
 
 ###################
@@ -144,8 +167,12 @@ def main():
         # if there is at least one hand seen
         if len(handDetector.landmarkDictionary) > 0: 
             if handDetector.landmarkDictionary[0][12][1] < handDetector.landmarkDictionary[0][9][1] :
+                if not handIsOpen:
+                    saberOffSound.play()
                 handIsOpen = True
             else:
+                if handIsOpen:
+                    saberOnSound.play()
                 handIsOpen = False
             #rendering the saber and the shaft
             aShaft.render(WINDOW)
@@ -196,21 +223,27 @@ def main():
                 if aSaber.collisionRect(redRect):
                     switchVal = 1
                     aSaber.changeColor(255,0,0)
+                    clashSound.play()
                 if aSaber.collisionRect(blueRect):
                     switchVal = 1
                     aSaber.changeColor(0,0,255)
+                    clashSound.play()
                 if aSaber.collisionRect(greenRect):
                     switchVal = 1
                     aSaber.changeColor(0,255,0)
+                    clashSound.play()
                 if aSaber.collisionRect(purpRect):
                     switchVal = 1
                     aSaber.changeColor(128,0,255)
+                    clashSound.play()
                 if aSaber.collisionRect(whiteRect):
                     switchVal = 1
                     aSaber.changeColor(255,255,255)
+                    clashSound.play()
                 if aSaber.collisionRect(yellowRect):
                     switchVal = 1
                     aSaber.changeColor(255,255,0)
+                    clashSound.play()
         # STARTSCREEN
         elif switchVal == 1:
             startRect = pygame.Rect(100,250,150,150)
@@ -230,28 +263,30 @@ def main():
                 if aSaber.collisionRect(startRect):
                     switchVal = 3
                     fillDroidList(5,5)
+                    clashSound.play()
                 if aSaber.collisionRect(instRect):
                     switchVal = 2
+                    clashSound.play()
         # INSTRUCTIONS
         elif switchVal == 2:
             # RENDERING ALL TEXT
             startMessage = "Welcome to BeatLightSaber!"
-            start = font.render(startMessage, True, (44,44,44))
+            start = font.render(startMessage, True, (255,255,255))
             WINDOW.blit(start, (50, 70))
             instructM1 = "In this game, your goal is to slice droids with your "
-            instruct1 = font.render(instructM1, True, (44,44,44))
+            instruct1 = font.render(instructM1, True, (255,255,255))
             WINDOW.blit(instruct1, (50, 150))
             instructM2 = "lightsaber and do not let them hit the bottom"
-            instruct2 = font.render(instructM2, True, (44,44,44))
+            instruct2 = font.render(instructM2, True, (255,255,255))
             WINDOW.blit(instruct2, (50, 200))
             instructM2 = "of the screen!"
-            instruct2 = font.render(instructM2, True, (44,44,44))
+            instruct2 = font.render(instructM2, True, (255,255,255))
             WINDOW.blit(instruct2, (50, 250))
             instructM3 = "Hold the lightsaber with either hand "
-            instruct3 = font.render(instructM3, True, (44,44,44))
+            instruct3 = font.render(instructM3, True, (255,255,255))
             WINDOW.blit(instruct3, (50, 350))
             instructM4 = "and get slicing!"
-            instruct4 = font.render(instructM4, True, (44,44,44))
+            instruct4 = font.render(instructM4, True, (255,255,255))
             WINDOW.blit(instruct4, (50, 400))
 
             backRect = pygame.Rect(900,450,150,150)
@@ -262,7 +297,8 @@ def main():
             WINDOW.blit(back, (910, 490))
             if not handIsOpen:
                 if aSaber.collisionRect(backRect):
-                    switchVal = 1        
+                    switchVal = 1    
+                    clashSound.play()    
         #Level 1
         elif switchVal == 3:
             animateDroid()
@@ -310,6 +346,7 @@ def main():
                 droidCollision()
             if(len(droidList) == 0):
                 switchVal = 8
+                winSound.play()
             if(checkDroidFinish()):
                 switchVal = 99
         #Win Screen
@@ -333,7 +370,8 @@ def main():
             WINDOW.blit(back, (910, 490))
             if not handIsOpen:
                 if aSaber.collisionRect(backRect):
-                    switchVal = 1    
+                    switchVal = 1  
+                    clashSound.play()  
             
  
         # for all the game events
